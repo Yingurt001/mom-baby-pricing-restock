@@ -1,22 +1,48 @@
-# Mom & Baby Pricing & Restock Optimization
-**母婴用品定价与补货优化（Huashu Cup 项目复现 + 增强版）**
+# Predictive Modeling of Baby & Maternity Health Impacts on Infant Growth
 
-> ARIMA + 回归/多项式拟合 + 非线性规划 + 粒子群算法（PSO）  
-> 目标：一周滚动周期内，在保质期短/损耗高/SKU约束下最大化利润的定价与补货联合决策。
+## 📌 Overview
+This project investigates the relationship between mothers’ physical and psychological health and the behavioral and sleep patterns of their infants. Using real survey data from 390 mother–infant pairs, we apply statistical analysis, machine learning, and optimization to predict infant outcomes and design cost-effective intervention plans.  
+> This work was awarded the **Meritorious Award** in the *2023 Huashu Cup National Undergraduate Mathematical Modeling Competition*.
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
-![Build](https://img.shields.io/badge/Status-Research%20Prototype-orange)
+## 📂 Contents
+- **Data preprocessing**: Outlier detection, variable transformation, normalization.
+- **Statistical analysis**: Correlation–significance testing (Spearman, Chi-square, ANOVA).
+- **Machine learning**: Random Forest classification, class balancing via under/over-sampling.
+- **Dimensionality reduction**: Principal Component Analysis (PCA).
+- **Predictive modeling**: Multinomial Logistic Regression for behavior and sleep quality prediction.
+- **Optimization**: Exhaustive search + cost model for treatment strategy optimization.
 
-## 1. 背景
-母婴类产品存在保质期短、需求波动强、对缺货敏感等特性。我们基于竞赛论文（华数杯）的方法，将“蔬菜场景”迁移为“母婴用品”场景，构建端到端的 **预测→规划→优化** 流水线。
+## 📊 Methodology
+1. **Data Cleaning & Transformation**
+   - Outlier replacement for sleep time & marital status.
+   - Direction unification (positive/negative indicators) & Min–Max normalization.
+   - Encoding categorical variables for model compatibility.
 
-## 2. 方法概览
-- **EDA**：销量/价盘/退货与损耗分布、季节性/节假日效应、品类/SKU关联（K-S、Pearson）
-- **预测**：ARIMA/Auto-ARIMA 进行短期成本/销量先验预测
-- **回归拟合**：价格-销量曲线多项式拟合（并保留更稳健的替代，如局部回归/样条）
-- **非线性规划（NLP）**：利润最大化，约束含：进货量、损耗率、SKU数/陈列容量、最低边际、服务水平
-- **PSO 优化**：在复杂/非凸情形下全局搜索 7 天联合策略，补足 NLP 对非凸/离散约束的不足
-- **数据增强建议**：用户画像、竞品供给、库存实测、上游供给质量/距离、舆情/热点
+2. **Exploratory Statistical Analysis**
+   - Tested normality of continuous variables (Jarque–Bera, Q–Q plots).
+   - Correlation–significance testing to identify key predictors.
 
-## 3. 目录结构
+3. **Behavior Prediction (Problem 2)**
+   - Built a Random Forest model (100 trees) achieving **54%** accuracy after balancing classes.
+   - Applied PCA to reduce 8 indicators to 5 principal components (84.7% cumulative variance).
+   - Logistic Regression achieved **70.3%** accuracy for behavior type prediction.
+
+4. **Treatment Cost Optimization (Problem 3 & 5)**
+   - Modeled treatment cost as a linear function of CBTS, EPDS, HADS score reduction.
+   - Exhaustive search across 6,992 possible score-reduction combinations.
+   - Found minimal-cost solutions for converting behavior types while improving sleep quality.
+
+5. **Sleep Quality Prediction (Problem 4)**
+   - Rated sleep quality into four levels (Poor, Medium, Good, Excellent) using Rank-Sum Ratio (RSR) method.
+   - Logistic Regression model achieved **75.6%** accuracy.
+
+## 📈 Key Results
+- Psychological indicators (CBTS, EPDS, HADS) have a stronger influence on infant sleep quality than physical indicators.
+- Optimal treatment for Case #238 (conflict-type behavior → moderate-type) costs **¥3,085**.
+- Achieving both improved behavior and excellent sleep quality requires tailored reduction strategies.
+
+## 🛠️ Reproducibility
+**Requirements**
+```bash
+MATLAB R2022b or later
+Excel / CSV data files
