@@ -1,0 +1,56 @@
+clc;clear
+% train是训练集的自变量，即母亲的身体特征和心理特征数据
+% train_result是训练集的因变量，即婴儿的行为特征
+% test是测试集的自变量，即母亲的身体特征和心理特征数据
+% train_result是测试集的因变量，即婴儿的行为特征，1为矛盾，2为中等，3为安静
+% 导入数据训练集和测试集的数据
+res = xlsread('原数据_1.xlsx');
+train = res(1:250, 1:8);%取前一百行的数据,行为样本数据，列为指标
+train_result = res(1:250, 14);%第十四列为婴儿的行为特征
+test = res(251:end, 1:8);%取一百行后的数据,行为样本数据，列为测试集的指标
+test_result = res(251:end, 14);%第十四列为将要对比的婴儿的行为特征答案
+
+% 使用TreeBagger内嵌函数建立随机森林模型，决策树为50棵
+numTrees = 100; % 随机森林中树的数量
+model = TreeBagger(numTrees, train, train_result, 'Method', 'classification');
+
+% 输出预测训练集的类别与train_result对比
+predicted_train_labels = predict(model, train);
+predicted_train_labels = str2double(predicted_train_labels);%将类别输出
+
+% 输出训练结果的准确率并进行输出
+train_accuracy = sum(predicted_train_labels == train_result) / numel(train_result);
+disp(['训练集准确率：', num2str(train_accuracy)]);
+
+% 输出预测训练集的类别与test_result对比
+predicted_test_labels = predict(model, test);
+predicted_test_labels = str2double(predicted_test_labels);
+
+% 输出测试结果的准确率并进行输出
+test_accuracy = sum(predicted_test_labels == test_result) / numel(test_result);
+disp(['测试集准确率：', num2str(test_accuracy)]);
+
+%导入缺失的二十组婴儿数据
+res1 = xlsread('输出文件.xlsx');
+X_baby = res1(:, 1:8);
+
+% 预测二十组婴儿的行为特征
+predict_baby = predict(model, X_baby);
+predict_baby = str2double(predict_baby);
+
+% 输出预测的婴儿的类别：1 or 2 or 3 
+disp('预测的类别标签：');
+disp(predict_baby);
+
+%结果准确率为56%
+%输出二十组婴儿行为特征为：[2,3,2,2,2,2,3,2,2,2,2,2,2,2,3,2,3，3,3,3,2]
+%1为矛盾型，2为中等型，3为安静型
+
+% 计算混淆矩阵
+C = confusionmat(test_result, predicted_test_labels);
+
+% 输出混淆矩阵
+disp('混淆矩阵：');
+disp(C);
+%淆矩阵将以矩阵的形式显示，其中行表示真实类别，列表示预测类别。
+% 每个元素表示预测为某个类别的样本在真实类别中的数量。
